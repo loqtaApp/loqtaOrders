@@ -37,6 +37,7 @@ if ($client->getAccessToken()) {
     
   /// read from Excel ordersbeforePaid sheet to get the custom data  
 $service = new Google_Service_Sheets($client);
+/*
 $range = 'orders!A:D';
 $response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range);
 $values = $response->getValues();
@@ -54,7 +55,7 @@ if (count($values) == 0) {
     }
   }
 }
-
+*/
 //if(sizeof($rowData) > 0 ){
 
 
@@ -63,7 +64,7 @@ $values = array(
     array(
       $orderDataSet,
         //($rowData[0]!="")?$rowData[0]:"",
-        ($rowData[1]!="")?$rowData[1]:"",
+        ($rowData[1]!="")?$rowData[1]:"testttt",
         ($rowData[2]!="")?$rowData[2]:"",
         ($rowData[3]!="")?$rowData[3]:"",
     ($rowData[4]!="")?$rowData[4]:""

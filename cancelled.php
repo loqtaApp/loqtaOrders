@@ -59,7 +59,7 @@ if ($client->getAccessToken()) {
         }
         if (sizeof($rowData) > 0) {
             ///Delete the order from Orders Sheet and store it in Fullfilled sheet
-
+            $orderfoundFlag = true;
             $requests[] = new Google_Service_Sheets_Request(array(
                 'deleteDimension' => array('range' => array(
                         'sheetId' => 497374135,
@@ -77,6 +77,7 @@ if ($client->getAccessToken()) {
             $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
     } elseif (!$orderfoundFlag) {
+
         //check if in paid sheet 
         $range = 'paid!A:E';
         $response = $service->spreadsheets_values->get($spreadsheetId, $range);
@@ -96,6 +97,7 @@ if ($client->getAccessToken()) {
         }
         if (sizeof($rowData) > 0) {
             ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+            $orderfoundFlag = true;
 
             $requests[] = new Google_Service_Sheets_Request(array(
                 'deleteDimension' => array('range' => array(
@@ -133,6 +135,7 @@ if ($client->getAccessToken()) {
         }
         if (sizeof($rowData) > 0) {
             ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+            $orderfoundFlag = true;
 
             $requests[] = new Google_Service_Sheets_Request(array(
                 'deleteDimension' => array('range' => array(
@@ -152,12 +155,10 @@ if ($client->getAccessToken()) {
         }
     }
 
-    $requestBody = new Google_Service_Sheets_ClearValuesRequest();
-    $response = $service->spreadsheets_values->clear($spreadsheetId, $range, $requestBody);
-/////write on excel 
+    /////write on excel 
     $values = array(
         array(
-            $data['id'] ,
+            $data['id'],
             $data['name'],
             $data['customer']['first_name'] . ' ' . $data['customer']['last_name'],
             $data['created_at'],

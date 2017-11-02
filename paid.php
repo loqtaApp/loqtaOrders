@@ -60,27 +60,6 @@ if ($client->getAccessToken()) {
         $orderfoundFlag = true;
         }
     }elseif (!$orderfoundFlag) {
-        //check if in paid sheet 
-         $range = 'paid!A:E';
-        $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-        $values = $response->getValues();
-        $count = count($values) - 1;
-        $i = '';
-        if (count($values) == 0) {
-        } else {
-            for ($i = $count; $i >= 0; $i --) {
-                // Print columns A and E, which correspond to indices 0 and 4.
-                if ($values[$i][1] == $data['name']) {
-                    $rowData = $values[$i];
-                    break;
-                }
-            }
-        }
-        if (sizeof($rowData) > 0) {
-        $range = 'paid!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
-        }
-    }elseif (!$orderfoundFlag) {
          //check if in orders sheet 
          $range = 'orders!A:E';
         $response = $service->spreadsheets_values->get($spreadsheetId, $range);
@@ -117,14 +96,14 @@ if ($client->getAccessToken()) {
             ),
                 // Additional rows ...
         );
-        $range = 'cancelled!A2:E';
+        $range = 'paid!A2:E';
         $body = new Google_Service_Sheets_ValueRange(array(
             'values' => $values
         ));
         $params = array(
             'valueInputOption' => "RAW"
         );
-        $result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range, $body, $params);
+        $result = $service->spreadsheets_values->append($spreadsheetId, $range, $body, $params);
     
 } elseif (OAUTH2_CLIENT_ID == 'REPLACE_ME') {
     $OAUTH2_CLIENT_ID = OAUTH2_CLIENT_ID;

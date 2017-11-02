@@ -43,7 +43,7 @@ $response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS
 $values = $response->getValues();
 //rsort($values);
 $count = count($values) - 1;
-
+$i = '';
 if (count($values) == 0) {
 } else {
   for ($i=$count;$i >= 0; $i --) {
@@ -55,10 +55,14 @@ if (count($values) == 0) {
     }
   }
 }
+///Delete the order from Orders Sheet and store it in Fullfilled sheet
+$range = 'orders!A'.($i+1).':E'.($i+1);
+$requestBody = new Google_Service_Sheets_ClearValuesRequest();
+$response = $service->spreadsheets_values->clear($spreadsheetId, $range, $requestBody);
+
+//////////////////////////////////////////////////////////////////////
 
 if(sizeof($rowData) > 0 ){
-
-
 /////write on excel 
 $values = array(
     array(
@@ -67,9 +71,7 @@ $values = array(
         $data['customer']['first_name'].' '.$data['customer']['last_name'],
         $data['created_at'],
        $data['total_price']
-       
-       
- // Cell values ...
+   
     ),
     // Additional rows ...
 );

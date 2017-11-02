@@ -41,6 +41,7 @@ $service = new Google_Service_Sheets($client);
 $range = 'fullfilled!A:E';
 $response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range);
 $values = $response->getValues();
+$data['name'] ='#3390';
 //rsort($values);
 $count = count($values) - 1;
 $i = '';
@@ -68,7 +69,7 @@ if(sizeof($rowData) > 0 ){
 /////write on excel 
 $values = array(
     array(
-       $data['id'],
+       $data['id'].'lllll'.$i,
         $data['name'],
         $data['customer']['first_name'].' '.$data['customer']['last_name'],
         $data['created_at'],

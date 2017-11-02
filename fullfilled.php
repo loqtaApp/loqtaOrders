@@ -48,7 +48,7 @@ if (count($values) == 0) {
 } else {
   for ($i=$count;$i >= 0; $i --) {
     // Print columns A and E, which correspond to indices 0 and 4.
-    if($values[$i][0] == $data['name']){
+    if($values[$i][1] == $data['name']){
         $rowData = $values[$i];
         break;
 

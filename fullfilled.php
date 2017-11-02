@@ -10,7 +10,7 @@ require_once __DIR__ . '/lib/google/vendor/autoload.php';
 define('OAUTH2_CLIENT_ID', '1089990018340-frdjldsicdgrbn7r637b63brstqj0fie.apps.googleusercontent.com');
 define('OAUTH2_CLIENT_SECRET', 'QY1xdsM49JzQ-AmujkyzSl6b');
 $key = file_get_contents('token.txt');
-$orderDataSet = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(file_get_contents('php://input'), true);
 // Client init
 $client = new Google_Client();
 $client->setClientId(OAUTH2_CLIENT_ID);
@@ -37,7 +37,7 @@ if ($client->getAccessToken()) {
     
   /// read from Excel ordersbeforePaid sheet to get the custom data  
 $service = new Google_Service_Sheets($client);
-/*
+
 $range = 'orders!A:D';
 $response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range);
 $values = $response->getValues();
@@ -48,26 +48,25 @@ if (count($values) == 0) {
 } else {
   for ($i=$count;$i >= 0; $i --) {
     // Print columns A and E, which correspond to indices 0 and 4.
-    if($values[$i][0] == $orderDataSet['order_id']){
+    if($values[$i][0] == $data['name']){
         $rowData = $values[$i];
         break;
 
     }
   }
 }
-*/
-//if(sizeof($rowData) > 0 ){
+
+if(sizeof($rowData) > 0 ){
 
 
 /////write on excel 
 $values = array(
     array(
-      file_get_contents('php://input'),
-        //($rowData[0]!="")?$rowData[0]:"",
-        ($rowData[1]!="")?$rowData[1]:"testttt",
-        ($rowData[2]!="")?$rowData[2]:"",
-        ($rowData[3]!="")?$rowData[3]:"",
-    ($rowData[4]!="")?$rowData[4]:""
+       $data['id'],
+        $data['name'],
+        $data['customer']['first_name'].' '.$data['customer']['last_name'],
+        $data['created_at'],
+       $data['total_price']
        
        
  // Cell values ...
@@ -85,7 +84,7 @@ $result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUn
     $body, $params);
 
 
-//}
+}
 } elseif (OAUTH2_CLIENT_ID == 'REPLACE_ME') {
     $OAUTH2_CLIENT_ID = OAUTH2_CLIENT_ID;
   $htmlBody = <<<END

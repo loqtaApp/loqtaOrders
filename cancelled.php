@@ -56,7 +56,7 @@ if (count($values) == 0) {
     }
   }
 }
-$range = 'fullfilled!A'.$i.':E'.$i;
+$range = 'fullfilled!A'.($i+1).':E'.($i+1);
 
 // TODO: Assign values to desired properties of `requestBody`:
 $requestBody = new Google_Service_Sheets_ClearValuesRequest();

@@ -56,8 +56,23 @@ if ($client->getAccessToken()) {
             }
         }
         if (sizeof($rowData) > 0) {
-        $range = 'fullfilled!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
+        ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+            $requests[] = new Google_Service_Sheets_Request(array(
+                'deleteDimension' => array('range' => array(
+                        'sheetId' => 497374135,
+                        'dimension' => "ROWS",
+                        'startIndex' => $i,
+                        'endIndex' => ($i + 1),
+                    )
+            )));
+// Add additional requests (operations) ...
+
+            $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+                'requests' => $requests
+            ));
+
+            $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
     }elseif (!$orderfoundFlag) {
          //check if in orders sheet 
@@ -77,8 +92,23 @@ if ($client->getAccessToken()) {
             }
         }
         if (sizeof($rowData) > 0) {
-        $range = 'orders!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
+        ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+            $requests[] = new Google_Service_Sheets_Request(array(
+                'deleteDimension' => array('range' => array(
+                        'sheetId' => 0,
+                        'dimension' => "ROWS",
+                        'startIndex' => $i,
+                        'endIndex' => ($i + 1),
+                    )
+            )));
+// Add additional requests (operations) ...
+
+            $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+                'requests' => $requests
+            ));
+
+            $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
     }
 

@@ -11,6 +11,7 @@ define('OAUTH2_CLIENT_ID', '1089990018340-frdjldsicdgrbn7r637b63brstqj0fie.apps.
 define('OAUTH2_CLIENT_SECRET', 'QY1xdsM49JzQ-AmujkyzSl6b');
 $key = file_get_contents('token.txt');
 $data = json_decode(file_get_contents('php://input'), true);
+
 // Client init
 $client = new Google_Client();
 $client->setClientId(OAUTH2_CLIENT_ID);
@@ -55,14 +56,33 @@ if (count($values) == 0) {
     }
   }
 }
-///Delete the order from Orders Sheet and store it in Fullfilled sheet
-$range = 'orders!A'.($i+1).':E'.($i+1);
-$requestBody = new Google_Service_Sheets_ClearValuesRequest();
-$response = $service->spreadsheets_values->clear($spreadsheetId, $range, $requestBody);
+
 
 //////////////////////////////////////////////////////////////////////
 
 if(sizeof($rowData) > 0 ){
+ ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+$requests[] = new Google_Service_Sheets_Request(array(
+  'deleteDimension' => array( 'range'=> array( 
+    'sheetId' => 0,
+    'dimension' => "ROWS",
+    'startIndex' => $i,
+    'endIndex' => ($i+1),  
+      
+  )
+)));
+// Add additional requests (operations) ...
+
+$batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+  'requests' => $requests
+));
+
+$response = $service->spreadsheets->batchUpdate($spreadsheetId,
+    $batchUpdateRequest);
+   
+    
+    
 /////write on excel 
 $values = array(
     array(

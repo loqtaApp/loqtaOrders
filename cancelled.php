@@ -1,4 +1,5 @@
 <?php
+
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST,OPTIONS');
 header('Cache-Control: no-cache');
@@ -46,6 +47,7 @@ if ($client->getAccessToken()) {
         $count = count($values) - 1;
         $i = '';
         if (count($values) == 0) {
+            
         } else {
             for ($i = $count; $i >= 0; $i --) {
                 // Print columns A and E, which correspond to indices 0 and 4.
@@ -56,17 +58,33 @@ if ($client->getAccessToken()) {
             }
         }
         if (sizeof($rowData) > 0) {
-        $range = 'fullfilled!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
+            ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+            $requests[] = new Google_Service_Sheets_Request(array(
+                'deleteDimension' => array('range' => array(
+                        'sheetId' => 497374135,
+                        'dimension' => "ROWS",
+                        'startIndex' => $i,
+                        'endIndex' => ($i + 1),
+                    )
+            )));
+// Add additional requests (operations) ...
+
+            $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+                'requests' => $requests
+            ));
+
+            $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
-    }elseif (!$orderfoundFlag) {
+    } elseif (!$orderfoundFlag) {
         //check if in paid sheet 
-         $range = 'paid!A:E';
+        $range = 'paid!A:E';
         $response = $service->spreadsheets_values->get($spreadsheetId, $range);
         $values = $response->getValues();
         $count = count($values) - 1;
         $i = '';
         if (count($values) == 0) {
+            
         } else {
             for ($i = $count; $i >= 0; $i --) {
                 // Print columns A and E, which correspond to indices 0 and 4.
@@ -77,17 +95,33 @@ if ($client->getAccessToken()) {
             }
         }
         if (sizeof($rowData) > 0) {
-        $range = 'paid!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
+            ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+            $requests[] = new Google_Service_Sheets_Request(array(
+                'deleteDimension' => array('range' => array(
+                        'sheetId' => 297238844,
+                        'dimension' => "ROWS",
+                        'startIndex' => $i,
+                        'endIndex' => ($i + 1),
+                    )
+            )));
+// Add additional requests (operations) ...
+
+            $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+                'requests' => $requests
+            ));
+
+            $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
-    }elseif (!$orderfoundFlag) {
-         //check if in orders sheet 
-         $range = 'orders!A:E';
+    } elseif (!$orderfoundFlag) {
+        //check if in orders sheet 
+        $range = 'orders!A:E';
         $response = $service->spreadsheets_values->get($spreadsheetId, $range);
         $values = $response->getValues();
         $count = count($values) - 1;
         $i = '';
         if (count($values) == 0) {
+            
         } else {
             for ($i = $count; $i >= 0; $i --) {
                 // Print columns A and E, which correspond to indices 0 and 4.
@@ -98,34 +132,48 @@ if ($client->getAccessToken()) {
             }
         }
         if (sizeof($rowData) > 0) {
-        $range = 'orders!A' . ($i + 1) . ':E' . ($i + 1);
-        $orderfoundFlag = true;
+            ///Delete the order from Orders Sheet and store it in Fullfilled sheet
+
+            $requests[] = new Google_Service_Sheets_Request(array(
+                'deleteDimension' => array('range' => array(
+                        'sheetId' => 0,
+                        'dimension' => "ROWS",
+                        'startIndex' => $i,
+                        'endIndex' => ($i + 1),
+                    )
+            )));
+// Add additional requests (operations) ...
+
+            $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
+                'requests' => $requests
+            ));
+
+            $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
         }
     }
 
     $requestBody = new Google_Service_Sheets_ClearValuesRequest();
     $response = $service->spreadsheets_values->clear($spreadsheetId, $range, $requestBody);
 /////write on excel 
-        $values = array(
-            array(
-                $data['id']."amscmas".$i,
-                $data['name'],
-                $data['customer']['first_name'] . ' ' . $data['customer']['last_name'],
-                $data['created_at'],
-                $data['total_price']
-            // Cell values ...
-            ),
-                // Additional rows ...
-        );
-        $range = 'cancelled!A2:E';
-        $body = new Google_Service_Sheets_ValueRange(array(
-            'values' => $values
-        ));
-        $params = array(
-            'valueInputOption' => "RAW"
-        );
-        $result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range, $body, $params);
-    
+    $values = array(
+        array(
+            $data['id'] ,
+            $data['name'],
+            $data['customer']['first_name'] . ' ' . $data['customer']['last_name'],
+            $data['created_at'],
+            $data['total_price']
+        // Cell values ...
+        ),
+            // Additional rows ...
+    );
+    $range = 'cancelled!A2:E';
+    $body = new Google_Service_Sheets_ValueRange(array(
+        'values' => $values
+    ));
+    $params = array(
+        'valueInputOption' => "RAW"
+    );
+    $result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range, $body, $params);
 } elseif (OAUTH2_CLIENT_ID == 'REPLACE_ME') {
     $OAUTH2_CLIENT_ID = OAUTH2_CLIENT_ID;
     $htmlBody = <<<END

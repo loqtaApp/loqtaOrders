@@ -62,7 +62,7 @@ if (count($values) == 0) {
 /////write on excel 
 $values = array(
     array(
-      $orderDataSet,
+      file_get_contents('php://input'),
         //($rowData[0]!="")?$rowData[0]:"",
         ($rowData[1]!="")?$rowData[1]:"testttt",
         ($rowData[2]!="")?$rowData[2]:"",

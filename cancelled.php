@@ -11,7 +11,6 @@ define('OAUTH2_CLIENT_ID', '1089990018340-frdjldsicdgrbn7r637b63brstqj0fie.apps.
 define('OAUTH2_CLIENT_SECRET', 'QY1xdsM49JzQ-AmujkyzSl6b');
 $key = file_get_contents('token.txt');
 $data = json_decode(file_get_contents('php://input'), true);
-
 // Client init
 $client = new Google_Client();
 $client->setClientId(OAUTH2_CLIENT_ID);
@@ -35,31 +34,63 @@ if (isset($_SESSION[$tokenSessionKey])) {
   $client->setAccessToken($_SESSION[$tokenSessionKey]);
 }
 if ($client->getAccessToken()) {
-//$client = getClient();
+   $spreadsheetId =  '1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc';
+  /// read from Excel ordersbeforePaid sheet to get the custom data  
 $service = new Google_Service_Sheets($client);
-$spreadsheetId = '1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc';
+
+$range = 'fullfilled!A:E';
+$response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range);
+$values = $response->getValues();
+//rsort($values);
+$count = count($values) - 1;
+$i = '';
+if (count($values) == 0) {
+} else {
+  for ($i=$count;$i >= 0; $i --) {
+    // Print columns A and E, which correspond to indices 0 and 4.
+    if($values[$i][1] == $data['name']){
+        $rowData = $values[$i];
+        break;
+
+    }
+  }
+}
+$range = 'fullfilled!A'.$i.':E';
+
+// TODO: Assign values to desired properties of `requestBody`:
+$requestBody = new Google_Service_Sheets_ClearValuesRequest();
+
+$response = $service->spreadsheets_values->clear($spreadsheetId, $range, $requestBody);
+
+if(sizeof($rowData) > 0 ){
+
+
+/////write on excel 
 $values = array(
-    array( 																		
+    array(
+       $data['id'],
         $data['name'],
         $data['customer']['first_name'].' '.$data['customer']['last_name'],
         $data['created_at'],
        $data['total_price']
+       
+       
  // Cell values ...
-    )
+    ),
     // Additional rows ...
 );
-
-$range = 'orders!A2:D';
+$range = 'cancelled!A2:E';
 $body = new Google_Service_Sheets_ValueRange(array(
   'values' => $values
 ));
 $params = array(
   'valueInputOption' => "RAW"
 );
-
-$result = $service->spreadsheets_values->append($spreadsheetId, $range,
+$result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range,
     $body, $params);
-echo json_encode($result);
+
+
+}
 } elseif (OAUTH2_CLIENT_ID == 'REPLACE_ME') {
     $OAUTH2_CLIENT_ID = OAUTH2_CLIENT_ID;
   $htmlBody = <<<END

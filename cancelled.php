@@ -108,7 +108,7 @@ if ($client->getAccessToken()) {
 /////write on excel 
         $values = array(
             array(
-                $data['id'],
+                $data['id']."amscmas".$i,
                 $data['name'],
                 $data['customer']['first_name'] . ' ' . $data['customer']['last_name'],
                 $data['created_at'],

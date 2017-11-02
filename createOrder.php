@@ -39,7 +39,8 @@ if ($client->getAccessToken()) {
 $service = new Google_Service_Sheets($client);
 $spreadsheetId = '1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc';
 $values = array(
-    array( 																		
+    array( 
+        $data['id'],
         $data['name'],
         $data['customer']['first_name'].' '.$data['customer']['last_name'],
         $data['created_at'],

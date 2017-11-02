@@ -48,7 +48,7 @@ if (count($values) == 0) {
 } else {
   for ($i=$count;$i >= 0; $i --) {
     // Print columns A and E, which correspond to indices 0 and 4.
-    if($values[$i][0] == $orderDataSet['name']){
+    if($values[$i][0] == $orderDataSet['order_id']){
         $rowData = $values[$i];
         break;
 
@@ -66,14 +66,15 @@ $values = array(
         ($rowData[0]!="")?$rowData[0]:"",
         ($rowData[1]!="")?$rowData[1]:"",
         ($rowData[2]!="")?$rowData[2]:"",
-        ($rowData[3]!="")?$rowData[3]:""
+        ($rowData[3]!="")?$rowData[3]:"",
+    ($rowData[4]!="")?$rowData[4]:""
        
        
  // Cell values ...
     ),
     // Additional rows ...
 );
-$range = 'fullfilled!A2:D';
+$range = 'fullfilled!A2:E';
 $body = new Google_Service_Sheets_ValueRange(array(
   'values' => $values
 ));

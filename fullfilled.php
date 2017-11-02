@@ -11,7 +11,6 @@ define('OAUTH2_CLIENT_ID', '1089990018340-frdjldsicdgrbn7r637b63brstqj0fie.apps.
 define('OAUTH2_CLIENT_SECRET', 'QY1xdsM49JzQ-AmujkyzSl6b');
 $key = file_get_contents('token.txt');
 $orderDataSet = json_decode(file_get_contents('php://input'), true);
-$orderDataSet['name'] = '2012';
 // Client init
 $client = new Google_Client();
 $client->setClientId(OAUTH2_CLIENT_ID);
@@ -56,14 +55,14 @@ if (count($values) == 0) {
   }
 }
 
-if(sizeof($rowData) > 0 ){
+//if(sizeof($rowData) > 0 ){
 
 
 /////write on excel 
 $values = array(
     array(
-      
-        ($rowData[0]!="")?$rowData[0]:"",
+      $orderDataSet,
+        //($rowData[0]!="")?$rowData[0]:"",
         ($rowData[1]!="")?$rowData[1]:"",
         ($rowData[2]!="")?$rowData[2]:"",
         ($rowData[3]!="")?$rowData[3]:"",
@@ -85,7 +84,7 @@ $result = $service->spreadsheets_values->append('1v0gHqEXScAqnBg9hudpGfINGyKVQUn
     $body, $params);
 
 
-}
+//}
 } elseif (OAUTH2_CLIENT_ID == 'REPLACE_ME') {
     $OAUTH2_CLIENT_ID = OAUTH2_CLIENT_ID;
   $htmlBody = <<<END

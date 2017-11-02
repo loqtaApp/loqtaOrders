@@ -41,7 +41,6 @@ $service = new Google_Service_Sheets($client);
 $range = 'fullfilled!A:E';
 $response = $service->spreadsheets_values->get('1v0gHqEXScAqnBg9hudpGfINGyKVQUnS--Co0UVgfBkc', $range);
 $values = $response->getValues();
-$data['name'] ='#3390';
 //rsort($values);
 $count = count($values) - 1;
 $i = '';

@@ -9,8 +9,8 @@ $outGazaCarrier = 'CarrierMohammed';
 date_default_timezone_set("Asia/Gaza");
 $todayDate = date("Y/m/d h:i");
 $orderStatus = '';
-
-
+$orderNoteForShortLink = 'shortAdminLink';
+$orderNoteShortLinkValue = '';
 //////////////////slack
 
 $channel = 'C6LB5HXD0';
@@ -68,7 +68,24 @@ foreach ($order['note_attributes'] as $note) {
     if ($note['name'] == $slackMSGTS) {
         $tsMSG_ID = $note['value'];
     }
+    if($note['name'] == $orderNoteForShortLink){
+        $orderNoteShortLinkValue = $note['value'];
+    }
 }
+
+
+
+$order = $response['orders'][0];        
+// google short link
+if($orderNoteShortLinkValue == ''){
+    $request = new Request($googleShortURL);
+    $request->setMethod('POST');
+    $request->setData(json_encode(array('longUrl' => $shopifyOrderLink.$order['id'])));
+    $response = $request->execute();
+    $orderNoteShortLinkValue = $response['id'];
+    $notesArray[$orderNoteForShortLink] = $response['id'];
+}
+
 
 $slackMSG = $order['name'];
 //define the action the we want to do (Reply, Post Message ..etc)
@@ -121,11 +138,20 @@ if ($order['cancelled_at'] != '') { //update existing
         );
     }
 }
+$slackMSG.= ' ('.$order['customer']['first_name']. ' ' .$order['customer']['last_name'].')';
 
+$slackMSG.= ' Total:'.$order['subtotal_price'];
+if($order['note'] != ''){
+    $slackMSG.= ' note:'.$order['note'];
+}
+if($orderNoteShortLinkValue != ''){
+    $slackMSG.= ' Link:'.$orderNoteShortLinkValue;
+}
 /**/
 $slackMSGRequestArray = array();
 $slackMSGRequestArray['channel'] = $channel;
 $slackMSGRequestArray['text'] = $slackMSG;
+
 $request->setHeaders(array(
     'Content-Type:application/json',
     'Authorization:Bearer ' . $token

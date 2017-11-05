@@ -140,12 +140,12 @@ if ($order['cancelled_at'] != '') { //update existing
 }
 $slackMSG.= ' ('.$order['customer']['first_name']. ' ' .$order['customer']['last_name'].')';
 
-$slackMSG.= ' Total:'.$order['subtotal_price'];
+$slackMSG.= ' - ('.$order['subtotal_price'].')';
 if($order['note'] != ''){
-    $slackMSG.= ' note:'.$order['note'];
+    $slackMSG.= ' -- '.$order['note'];
 }
 if($orderNoteShortLinkValue != ''){
-    $slackMSG.= ' Link:'.$orderNoteShortLinkValue;
+    $slackMSG.= ' - '.$orderNoteShortLinkValue;
 }
 /**/
 $slackMSGRequestArray = array();

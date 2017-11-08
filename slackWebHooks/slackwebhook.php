@@ -14,6 +14,7 @@ $orderNoteShortLinkValue = '';
 //////////////////slack
 
 $channel = 'C6LB5HXD0';
+$cancelledChannelID = 'C7WUEGNHG';
 $text = '';
 $fullfilledStatusReaction = ':racing_motorcycle:';
 $paidStatusReaction = ':100:';
@@ -169,6 +170,10 @@ if ($tsMSG_ID != '') { //slack message before
     
 } 
 if($tsMSG_ID == ''){//new slack message
+	if($orderStatus == 'ملغي'){
+		$slackMSGRequestArray['channel'] = $cancelledChannelID;
+		$channel = $cancelledChannelID;
+	}
     $request->setURL($postMessageEndPoint);
     $request->setData(json_encode($slackMSGRequestArray));
     $slackResponse = $request->execute();

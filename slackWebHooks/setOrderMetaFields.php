@@ -5,12 +5,14 @@ $data = json_decode($data, true);
 
 $mainURL = $mainURLEndPoint . "/orders/" . $data['id'] . "/metafields.json";
 
-if ($order['fulfillment_status'] == 'fulfilled') {
-    $key = 'fulfill_date';
-} elseif ($data['cancelled_at'] != '') {
+if ($data['cancelled_at'] != '') {
     $key = 'cancel_date';
-} elseif ($data['financial_status'] == 'paid') {
+} 
+elseif ($data['financial_status'] == 'paid') {
     $key = 'paid_date';
+}
+elseif ($data['fulfillment_status'] == 'fulfilled') {
+    $key = 'fulfill_date';
 }
 
 $metaFieldData = array(

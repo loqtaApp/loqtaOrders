@@ -13,3 +13,4 @@ if(!defined('NO_DEFAULT_HEADERS')){
     header('Content-Type: application/json');
     header('Accept: application/json');
 }
+date_default_timezone_set ( 'Asia/Gaza' );

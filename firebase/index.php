@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-error_reporting(0);
+error_reporting(E_ALL);
 //initialize request  to create order with wehook
 
 

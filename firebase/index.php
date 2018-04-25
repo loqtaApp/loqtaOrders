@@ -1,7 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 header('Content-Type: application/json');
-die("here");
-error_reporting(E_ALL);
+
 //initialize request  to create order with wehook
 
 

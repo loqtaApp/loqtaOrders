@@ -1,17 +1,16 @@
 <?php
 
-include 'settings.php';
+include 'slackWebHooks/settings.php';
 $data = json_decode($data, true);
 
-$ordersURL = "{$mainLink}/orders.json";
-$customersURL = "{$mainLink}/customers/search.json?query=";
+$ordersURL = "{$mainURLEndPoint}/orders.json";
+$customersURL = "{$mainURLEndPoint}/customers.json?query=";
 
 $retriveKeyValue = intval($_GET['idd']);
 $numberOfDigits = strlen((string) $retriveKeyValue);
 if ($numberOfDigits < 8) {
     //get orders path
     $params = "?status=any&name=";
-    $restRequest->setUrl($mainURL . $params . $ordersNum);
     $request = new Request($ordersURL . $params . $ordersNum);
     $response = $request->execute();
 
@@ -24,11 +23,15 @@ if ($numberOfDigits < 8) {
     }
 } else {
     //get customer path
-    $customersURL = $customersURL . $retriveKeyValue;
+    $customersURL = $customersURL . 'email:0599059940@loqta.ps';
+    echo $customersURL;
     $request = new Request($customersURL);
+
     $response = $request->execute();
     if (array_key_exists('customers', $response) && sizeof($response["customers"]) > 0) {
         $customer = $response["customers"][0];
+                var_dump($response);
+
         $customerID = $customer["id"];
         $request = new Request($ordersURL . "?customer_id=" . $customerID);
         $response = $request->execute();

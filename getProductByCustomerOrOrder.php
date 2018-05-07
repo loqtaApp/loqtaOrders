@@ -26,16 +26,17 @@ function getOrdersByLink($link) {
 }
 
 function getPreparedOrderInformation($order) {
+
     $preparedOrder['order_number'] = $order['order_number'];
     $preparedOrder['customer']["first_name"] = $order['customer']["first_name"];
     $preparedOrder['customer']["last_name"] = $order['customer']["last_name"];
-    $preparedOrder['customer']["phone"] = ($order['customer']["phone"] == null) ? $order['customer']["phone"] : $order['customer']["default_address"]["phone"];
+    $preparedOrder['customer']["phone"] = ($order['customer']["phone"] != null) ? $order['customer']["phone"] : $order['customer']["default_address"]["phone"];
     $preparedOrder["subtotal_price"] = $order["subtotal_price"];
     $itemTitles = '';
     $itemsSize = sizeof($order["line_items"]);
     $i = 0;
     foreach ($order["line_items"] as $lineItem) {
-        $itemTitles .= $lineItem['title'] . ' ' . '(' . $lineItem['price'] . ') ' . ($itemsSize == ($i - 1)) ? '' : ',';
+        $itemTitles .= $lineItem['title'] . ' - ' . $lineItem['price']  . ((($itemsSize - 1)== $i) ? '' : ',');
         $i++;
     }
     $preparedOrder["line_items"] = $itemTitles;
@@ -49,17 +50,18 @@ if ($numberOfDigits < 8) {
     $params = "?" . $ordersFilter . $retriveKeyValue;
     $requestedOrder = '';
 
-    $orders = getOrdersByLink($ordersURL . $params . $ordersNum);
+
+    $orders = getOrdersByLink($ordersURL . $params);
     foreach ($orders as $order) {
-        if ($order['order_number'] == $ordersNum) {
-            $requestedOrder = $ordersNum;
+
+        if ($order['order_number'] == $retriveKeyValue) {
+            $requestedOrder = $order;
         }
     }
     if (!$orders || $requestedOrder == '') {
         echo 'No orders found for ' . $retriveKeyValue;
-    }
-    else{
-        return getPreparedOrderInformation([$requestedOrder]);
+    } else {
+        var_dump(getPreparedOrderInformation($requestedOrder));
     }
 } else {
     $email = $retriveKeyValue . '@loqta.ps';

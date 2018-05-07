@@ -62,7 +62,22 @@ if ($numberOfDigits < 8) {
     if (!$orders || $requestedOrder == '') {
         echo 'No orders found for ' . $retriveKeyValue;
     } else {
-        $preparedOrders = getPreparedOrderInformation($requestedOrder);
+        $preparedOrder = getPreparedOrderInformation($requestedOrder);
+
+ 
+        $postNoteData ['order']['id'] = $order['id'];
+        $postNoteData ['order']['financial_status'] = 'paid';
+
+        $shopifyParamsURL = $mainURLEndPoint . '/orders/' . $requestedOrder['id'] . ".json";
+        $request = new Request($shopifyParamsURL);
+        $request->setURL($shopifyParamsURL);
+        $request->setHeaders(array(
+            'Content-Type:application/json'
+            ));    
+        $request->setData(json_encode($postNoteData));
+        $request->setMethod('PUT');
+        $shopifyResponse = $request->execute();    
+        var_dump($shopifyResponse);
     }
 } else {
     $email = $retriveKeyValue . '@loqta.ps';

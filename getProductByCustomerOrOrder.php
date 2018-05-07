@@ -36,10 +36,11 @@ function getPreparedOrderInformation($order) {
     $itemsSize = sizeof($order["line_items"]);
     $i = 0;
     foreach ($order["line_items"] as $lineItem) {
-        $itemTitles .= $lineItem['title'] . ' - ' . $lineItem['price']  . ((($itemsSize - 1)== $i) ? '' : ',');
+        $itemTitles .= $lineItem['title'] . ' - ' . $lineItem['price'] . ((($itemsSize - 1) == $i) ? '' : ',');
         $i++;
     }
     $preparedOrder["line_items"] = $itemTitles;
+    $preparedOrder["address"] = ($order['shipping_address']["address1"] != null) ? $order['shipping_address']["address1"] : $order['customer']["default_address"]["address1"];
 
     return $preparedOrder;
 }
@@ -61,7 +62,7 @@ if ($numberOfDigits < 8) {
     if (!$orders || $requestedOrder == '') {
         echo 'No orders found for ' . $retriveKeyValue;
     } else {
-        var_dump(getPreparedOrderInformation($requestedOrder));
+        $preparedOrders = getPreparedOrderInformation($requestedOrder);
     }
 } else {
     $email = $retriveKeyValue . '@loqta.ps';
@@ -80,9 +81,15 @@ if ($numberOfDigits < 8) {
         }
         $customerID = $requestedCustomer["id"];
         $orders = getOrdersByLink($ordersURL . "?customer_id=" . $customerID . '&' . $ordersFilter);
+
         if (!$orders || $requestedCustomer == '') {
             echo 'No orders found for ' . $customer['first_name'];
         }
+        $preparedOrders = [];
+        foreach ($orders as $order) {
+            $preparedOrders[] = getPreparedOrderInformation($order);
+        }
+        var_dump($preparedOrders);
     } else {
         //no customer found
         echo 'No customer name found for id = ' . $retriveKeyValue;

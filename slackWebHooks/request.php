@@ -38,6 +38,8 @@ class Request {
         curl_setopt($ch, CURLOPT_PUT, 1);
         curl_setopt($ch, CURLOPT_INFILE, $fp); // file pointer
         curl_setopt($ch, CURLOPT_INFILESIZE, strlen($this->data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
     }
 
     public function getHeaders(&$ch) {

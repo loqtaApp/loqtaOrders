@@ -1,5 +1,4 @@
 <?php
-
 include 'slackWebHooks/settings.php';
 $data = json_decode($data, true);
 
@@ -79,6 +78,7 @@ function updateOrderPalPay($requestedOrder, $postNoteData) {
     ));
     $request->setData(json_encode($postNoteData));
     $request->setMethod('PUT');
+    
     return $request->execute();
 }
 
@@ -101,6 +101,7 @@ if ($numberOfDigits < 8) {
         $resultMessages[] = 'No orders found for "' . $retriveKeyValue . '"';
         $resultStatus = false;
     } else {
+        
         $resultOperations[] = array(LOOK_FOR_ORDER_VIA_ORDER_ID => true);
         $resultMessages[] = 'Order found with number "' . $retriveKeyValue . '"';
         $customerInformation["first_name"] = $orders[0]['customer']["first_name"];
@@ -110,7 +111,6 @@ if ($numberOfDigits < 8) {
         $resultOrders = [$preparedOrder];
 
         if ($actionKey == PAY_ACTION) {
-            $resultOperations[] = array(PAY_ORDER_VIA_ORDER_ID => false);
 
             $postNoteData['order']['id'] = $requestedOrder['id'];
             $postNoteData['order']['tags'] = (array_key_exists('tags', $requestedOrder) && $requestedOrder['tags'] != '') ? $requestedOrder['tags'] . ', ' . PALPAY_TAG : PALPAY_TAG;
@@ -124,6 +124,7 @@ if ($numberOfDigits < 8) {
             $postNoteData ['order']['note_attributes'] = $note_attributes;
             $postNoteData ['order']['note'] = (array_key_exists('note', $requestedOrder) && $requestedOrder['note'] != '') ? $requestedOrder['note'] . ' ' . PALPAY_ORDER_NOTE : PALPAY_ORDER_NOTE;
             $shopifyResponse = updateOrderPalPay($requestedOrder, $postNoteData);
+            
             if (array_key_exists('order', $shopifyResponse) && $shopifyResponse['order']['id']) {
                 $resultMessages[] = 'Order "' . $retriveKeyValue . '" was paid Successfully';                                
                 $resultOperations[] = array(PAY_ORDER_VIA_ORDER_ID => true);
@@ -137,14 +138,13 @@ if ($numberOfDigits < 8) {
             $tagsStr = str_replace(', ' . PALPAY_TAG, "", $requestedOrder['tags']);
             $tagsStr = str_replace(PALPAY_TAG, "", $tagsStr);
 
-            $noteStr = str_replace(' ' . PALPAY_ORDER_NOTE, "", $requestedOrder['note']);
-
 
             $postNoteData['order']['tags'] = $tagsStr;
             $postNoteData['order']['note'] = $requestedOrder['note'] . ' ' . PALPAY_ORDER_CANCEL_NOTE;
 
             $note_attributes = $requestedOrder['note_attributes'];
-            array_push(array($note_attributes, 'name' => 'palpay_cancel_date', 'value' => date("Y/m/d h:i")));
+            array_push($note_attributes, array('name' => 'palpay_cancel_date', 'value' => date("Y/m/d h:i")));
+            $postNoteData['order']['note_attributes'] = $note_attributes;
 
             $shopifyResponse = updateOrderPalPay($requestedOrder, $postNoteData);
             if (array_key_exists('order', $shopifyResponse) && $shopifyResponse['order']['id']) {
@@ -198,8 +198,6 @@ if ($numberOfDigits < 8) {
         $resultMessages[] = 'No customer name found for id "' . $retriveKeyValue . '"';
     }
 }
-
-
 
 $result_of_operations = array(
     'orders' => $resultOrders,

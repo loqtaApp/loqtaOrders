@@ -28,13 +28,14 @@ define('CANCEL_ACTION', 2);
 
 define('PALPAY_TAG', 'PAID_PAL_PAY, '.strtoupper($payment_currency));
 
-$palpay_note = 'تم دفع" ';
+$palpay_note = '"';
+$palpay_note.= 'تم دفع ';
 $palpay_note.= "($payment_amount)";
 $palpay_note.= "بعملة ال";
 $palpay_note.= "($payment_currency)";
 $palpay_note.= 'بتاريخ ';
 $palpay_note.= "($currentTime)";
-$palpay_note.= '" ';
+$palpay_note = '"';
 
 define('PALPAY_ORDER_NOTE', $palpay_note);
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');

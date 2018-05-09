@@ -19,13 +19,14 @@ $actionKey = ($_GET['pay']);
 $point_of_sale = ($_GET['pos']);
 $payment_amount = ($_GET['amount']);
 
-$payment_currency = ($_GET['currency']) ? $payment_currency :  'ILS';
+$payment_currency = ($_GET['currency']) ? $_GET['currency'] :  'ILS';
 
 
 define('PAY_ACTION', 1);
 define('CANCEL_ACTION', 2);
 
-define('PALPAY_TAG', 'PAID_PAL_PAY');
+define('PALPAY_TAG', 'PAID_PAL_PAY, '.strtoupper($payment_currency));
+
 define('PALPAY_ORDER_NOTE', ' تم دفع هذا الطلب بواسطة بال بي');
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');
 

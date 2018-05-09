@@ -8,6 +8,7 @@ $customersURL = "{$mainURLEndPoint}/customers/search.json?query=";
 
 $palpayOauthKey = '83c9c662d05a81a4b58d009fe792e7e953e26a6b';
 
+$currentTime = date("Y/m/d h:i");
 $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
@@ -27,7 +28,15 @@ define('CANCEL_ACTION', 2);
 
 define('PALPAY_TAG', 'PAID_PAL_PAY, '.strtoupper($payment_currency));
 
-define('PALPAY_ORDER_NOTE', ' تم دفع هذا الطلب بواسطة بال بي');
+$palpay_note = 'تم دفع" ';
+$palpay_note.= "($payment_amount)";
+$palpay_note.= "بعملة ال";
+$palpay_note.= "($payment_currency)";
+$palpay_note.= 'بتاريخ ';
+$palpay_note.= "($currentTime)";
+$palpay_note.= '" ';
+
+define('PALPAY_ORDER_NOTE', $palpay_note);
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');
 
 

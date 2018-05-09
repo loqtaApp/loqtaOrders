@@ -79,9 +79,9 @@ if ($resultStatus) {
     function getPreparedOrderInformation($order) {
 
         $preparedOrder['order_number'] = $order['order_number'];
-//    $preparedOrder['customer']["first_name"] = $order['customer']["first_name"];
-//    $preparedOrder['customer']["last_name"] = $order['customer']["last_name"];
         $preparedOrder["subtotal_price"] = $order["subtotal_price"];
+        $preparedOrder["subtotal_price_usd"] = estimateOrderPriceInUSD($order);
+
         $itemTitles = '';
         $itemsSize = sizeof($order["line_items"]);
         $i = 0;

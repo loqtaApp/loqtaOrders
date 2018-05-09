@@ -35,7 +35,7 @@ $palpay_note.= "بعملة ال";
 $palpay_note.= "($payment_currency)";
 $palpay_note.= 'بتاريخ ';
 $palpay_note.= "($currentTime)";
-$palpay_note = '"';
+$palpay_note.= '"';
 
 define('PALPAY_ORDER_NOTE', $palpay_note);
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');

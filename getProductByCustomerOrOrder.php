@@ -11,13 +11,16 @@ $palpayOauthKey = '83c9c662d05a81a4b58d009fe792e7e953e26a6b';
 $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
-
+die(var_dump($tokenToVeirify));
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];
 $retriveKeyValue = ($_GET['idd']);
 $actionKey = ($_GET['pay']);
 $point_of_sale = ($_GET['pos']);
+$payment_amount = ($_GET['amount']);
+
+$payment_currency = ($_GET['currency']) ? $payment_currency :  'ILS';
 
 
 define('PAY_ACTION', 1);
@@ -33,6 +36,8 @@ $ordersFilter = "financial_status=pending&fulfillment_status=unshipped&name=";
 
 $note_palpay_elements[] = array('name' => 'palpay_paid_date', 'value' => date("Y/m/d h:i"));
 $note_palpay_elements[] = array('name' => 'palpay_pos', 'value' => $point_of_sale);
+$note_palpay_elements[] = array('name' => 'payment_amount', 'value' => $payment_amount);
+$note_palpay_elements[] = array('name' => 'payment_currency', 'value' => $payment_currency);
 
 
 //operations
@@ -56,7 +61,10 @@ if ($tokenToVeirify != $token) {
 }
 
 if ($resultStatus) {
-
+    function estimateOrderPriceInUSD($order){
+        $exRate = $order['total_price']/$order['total_price_usd'];
+        return $order["subtotal_price"]/$exRate;
+    }
     function getOrdersByLink($link) {
         $request = new Request($link);
         $response = $request->execute();
@@ -125,6 +133,7 @@ if ($resultStatus) {
             $resultMessages[] = 'Order found with number "' . $retriveKeyValue . '"';
             $customerInformation["first_name"] = $orders[0]['customer']["first_name"];
             $customerInformation["last_name"] = $orders[0]['customer']["last_name"];
+            $customerInformation["phone"] = ($orders[0]['customer']["phone"] != null) ? $orders[0]['customer']["phone"] : $orders[0]['customer']["default_address"]["phone"];
 
             $preparedOrder = getPreparedOrderInformation($requestedOrder);
             $resultOrders = [$preparedOrder];

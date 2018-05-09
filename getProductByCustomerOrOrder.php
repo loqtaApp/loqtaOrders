@@ -29,7 +29,7 @@ define('CANCEL_ACTION', 2);
 define('PALPAY_TAG', 'PAID_PAL_PAY, '.strtoupper($payment_currency));
 
 $palpay_note = '"';
-$palpay_note.= 'تم دفع ';
+$palpay_note.= 'تم دفع';
 $palpay_note.= "($payment_amount)";
 $palpay_note.= "بعملة ال";
 $palpay_note.= "($payment_currency)";

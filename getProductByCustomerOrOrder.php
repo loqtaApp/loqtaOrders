@@ -11,7 +11,6 @@ $palpayOauthKey = '83c9c662d05a81a4b58d009fe792e7e953e26a6b';
 $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
-die(var_dump($tokenToVeirify));
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];

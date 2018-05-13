@@ -97,11 +97,15 @@ if ($resultStatus) {
             if (array_key_exists('tags', $order) && $order['tags'] != '') {
                 if (strstr($order['tags'], PALPAY_PAID_TAG)) {
                     return false;
-                } else
+                } else {
                     return true;
+                }
+            } else {
+                return true;
             }
-        } else
+        } else {
             return true;
+        }
     }
 
     function getPreparedOrderInformation($order) {
@@ -151,7 +155,7 @@ if ($resultStatus) {
                 $requestedOrder = $order;
             }
         }
-        if (!$orders || $requestedOrder == '' || !(filterOrders($requestedOrder)) ) {
+        if (!$orders || $requestedOrder == '' || !(filterOrders($requestedOrder))) {
             $resultOperations[] = array(LOOK_FOR_ORDER_VIA_ORDER_ID => false);
             $resultMessages[] = 'No orders found for "' . $retriveKeyValue . '"';
             $resultStatus = false;

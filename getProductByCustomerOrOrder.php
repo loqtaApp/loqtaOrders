@@ -12,6 +12,7 @@ $currentTime = date("Y/m/d h:i");
 $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
+
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];
@@ -19,23 +20,25 @@ $retriveKeyValue = ($_GET['idd']);
 $actionKey = ($_GET['pay']);
 $point_of_sale = ($_GET['pos']);
 $payment_amount = ($_GET['amount']);
+$orderFilterUnPaidOnlyStatus = ($_GET['unpaid']);
 
-$payment_currency = ($_GET['currency']) ? $_GET['currency'] :  'ILS';
+$payment_currency = ($_GET['currency']) ? $_GET['currency'] : 'ILS';
 
 
 define('PAY_ACTION', 1);
 define('CANCEL_ACTION', 2);
 
-define('PALPAY_TAG', 'PAID_PAL_PAY, '.strtoupper($payment_currency));
+define('PALPAY_PAID_TAG', 'PAID_PAL_PAY');
+define('PALPAY_TAG', PALPAY_PAID_TAG . ', ' . strtoupper($payment_currency));
 
 $palpay_note = '"';
-$palpay_note.= 'تم دفع';
-$palpay_note.= "($payment_amount)";
-$palpay_note.= "بعملة ال";
-$palpay_note.= "($payment_currency)";
-$palpay_note.= 'بتاريخ ';
-$palpay_note.= "($currentTime)";
-$palpay_note.= '"';
+$palpay_note .= 'تم دفع';
+$palpay_note .= "($payment_amount)";
+$palpay_note .= "بعملة ال";
+$palpay_note .= "($payment_currency)";
+$palpay_note .= 'بتاريخ ';
+$palpay_note .= "($currentTime)";
+$palpay_note .= '"';
 
 define('PALPAY_ORDER_NOTE', $palpay_note);
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');
@@ -71,10 +74,12 @@ if ($tokenToVeirify != $token) {
 }
 
 if ($resultStatus) {
-    function estimateOrderPriceInUSD($order){
-        $exRate = $order['total_price']/$order['total_price_usd'];
-        return $order["subtotal_price"]/$exRate;
+
+    function estimateOrderPriceInUSD($order) {
+        $exRate = $order['total_price'] / $order['total_price_usd'];
+        return $order["subtotal_price"] / $exRate;
     }
+
     function getOrdersByLink($link) {
         $request = new Request($link);
         $response = $request->execute();
@@ -84,6 +89,19 @@ if ($resultStatus) {
             //no orders found
             return false;
         }
+    }
+
+    function filterOrders($order) {
+        global $orderFilterUnPaidOnlyStatus;
+        if ($orderFilterUnPaidOnlyStatus == true) {
+            if (array_key_exists('tags', $order) && $order['tags'] != '') {
+                if (strstr($order['tags'], PALPAY_PAID_TAG)) {
+                    return false;
+                } else
+                    return true;
+            }
+        } else
+            return true;
     }
 
     function getPreparedOrderInformation($order) {
@@ -133,7 +151,7 @@ if ($resultStatus) {
                 $requestedOrder = $order;
             }
         }
-        if (!$orders || $requestedOrder == '') {
+        if (!$orders || $requestedOrder == '' || !(filterOrders($requestedOrder)) ) {
             $resultOperations[] = array(LOOK_FOR_ORDER_VIA_ORDER_ID => false);
             $resultMessages[] = 'No orders found for "' . $retriveKeyValue . '"';
             $resultStatus = false;
@@ -144,7 +162,6 @@ if ($resultStatus) {
             $customerInformation["first_name"] = $orders[0]['customer']["first_name"];
             $customerInformation["last_name"] = $orders[0]['customer']["last_name"];
             $customerInformation["phone"] = ($orders[0]['customer']["phone"] != null) ? $orders[0]['customer']["phone"] : $orders[0]['customer']["default_address"]["phone"];
-
             $preparedOrder = getPreparedOrderInformation($requestedOrder);
             $resultOrders = [$preparedOrder];
 
@@ -222,13 +239,15 @@ if ($resultStatus) {
                 $resultOperations[] = array(LOOK_FOR_ORDER_VIA_CUSTOMER_ID => true);
                 $preparedOrders = [];
                 foreach ($orders as $order) {
-                    $preparedOrders[] = getPreparedOrderInformation($order);
+                    if (filterOrders($order)) {
+                        $preparedOrders[] = getPreparedOrderInformation($order);
+                    }
                 }
 
                 $customerInformation["first_name"] = $orders[0]['customer']["first_name"];
                 $customerInformation["last_name"] = $orders[0]['customer']["last_name"];
                 $customerInformation["phone"] = ($orders[0]['customer']["phone"] != null) ? $orders[0]['customer']["phone"] : $orders[0]['customer']["default_address"]["phone"];
-                
+
                 $resultOrders = ($preparedOrders);
             }
         } else {

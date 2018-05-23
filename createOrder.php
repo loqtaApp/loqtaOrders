@@ -1,4 +1,5 @@
  <?php
+ die('herere');
 include 'slackWebHooks/settings.php';
 $data = json_decode($data, true);
 $postNoteData = array();

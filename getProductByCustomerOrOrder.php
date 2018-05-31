@@ -13,7 +13,7 @@ $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
 
-//die($tokenToVeirify);
+die($tokenToVeirify);
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];
@@ -22,7 +22,7 @@ $actionKey = ($_GET['pay']);
 $point_of_sale = ($_GET['pos']);
 $payment_amount = ($_GET['amount']);
 $orderFilterUnPaidOnlyStatus = ($_GET['unpaid']);
-$payment_method = ($_GET['method']) ? $_GET['method'] :'palpay';
+$payment_method = ($_GET['method']) ? $_GET['method'] : 'palpay';
 
 $payment_currency = ($_GET['currency']) ? $_GET['currency'] : 'ILS';
 
@@ -111,14 +111,14 @@ if ($resultStatus) {
             return true;
         }
     }
-    
-    function getTransactionFees($price){
-                        global $payment_inc_amount, $payment_method;
-                        return ceil(($payment_inc_amount[$payment_method] * $price)/100);
 
+    function getTransactionFees($price) {
+        global $payment_inc_amount, $payment_method;
+        return ceil(($payment_inc_amount[$payment_method] * $price) / 100);
     }
-    function getTheFinalPriceWithTransactionFees($price){
-                return ceil(getTransactionFees($price) + $price);
+
+    function getTheFinalPriceWithTransactionFees($price) {
+        return ceil(getTransactionFees($price) + $price);
     }
 
     function getPreparedOrderInformation($order) {
@@ -134,7 +134,7 @@ if ($resultStatus) {
             $itemTitles .= $lineItem['title'] . ' - ' . $lineItem['price'] . ((($itemsSize - 1) == $i) ? '' : ',');
             $i++;
         }
-        $itemTitles .= "+ Transfer Price (".getTransactionFees($order["subtotal_price"]).")";
+        $itemTitles .= "+ Transfer Price (" . getTransactionFees($order["subtotal_price"]) . ")";
         $preparedOrder["line_items"] = $itemTitles;
         $preparedOrder["address"] = ($order['shipping_address']["address1"] != null) ? $order['shipping_address']["address1"] : $order['customer']["default_address"]["address1"];
 

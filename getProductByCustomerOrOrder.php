@@ -13,6 +13,7 @@ $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
 
+//die($tokenToVeirify);
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];
@@ -21,6 +22,7 @@ $actionKey = ($_GET['pay']);
 $point_of_sale = ($_GET['pos']);
 $payment_amount = ($_GET['amount']);
 $orderFilterUnPaidOnlyStatus = ($_GET['unpaid']);
+$payment_method = ($_GET['method']) ? $_GET['method'] :'palpay';
 
 $payment_currency = ($_GET['currency']) ? $_GET['currency'] : 'ILS';
 
@@ -39,6 +41,8 @@ $palpay_note .= "($payment_currency)";
 $palpay_note .= 'بتاريخ ';
 $palpay_note .= "($currentTime)";
 $palpay_note .= '"';
+
+$payment_inc_amount['palpay'] = 2;
 
 define('PALPAY_ORDER_NOTE', $palpay_note);
 define('PALPAY_ORDER_CANCEL_NOTE', ' تم إلغاء دفع هذا الطلب بواسطة بال بي');
@@ -107,11 +111,20 @@ if ($resultStatus) {
             return true;
         }
     }
+    
+    function getTransactionFees($price){
+                        global $payment_inc_amount, $payment_method;
+                        return ceil(($payment_inc_amount[$payment_method] * $price)/100);
+
+    }
+    function getTheFinalPriceWithTransactionFees($price){
+                return ceil(getTransactionFees($price) + $price);
+    }
 
     function getPreparedOrderInformation($order) {
-
+        global $payment_inc_amount, $payment_method;
         $preparedOrder['order_number'] = $order['order_number'];
-        $preparedOrder["subtotal_price"] = $order["subtotal_price"];
+        $preparedOrder["subtotal_price"] = getTheFinalPriceWithTransactionFees($order["subtotal_price"]);
         $preparedOrder["subtotal_price_usd"] = estimateOrderPriceInUSD($order);
 
         $itemTitles = '';
@@ -121,6 +134,7 @@ if ($resultStatus) {
             $itemTitles .= $lineItem['title'] . ' - ' . $lineItem['price'] . ((($itemsSize - 1) == $i) ? '' : ',');
             $i++;
         }
+        $itemTitles .= "+ Transfer Price (".getTransactionFees($order["subtotal_price"]).")";
         $preparedOrder["line_items"] = $itemTitles;
         $preparedOrder["address"] = ($order['shipping_address']["address1"] != null) ? $order['shipping_address']["address1"] : $order['customer']["default_address"]["address1"];
 

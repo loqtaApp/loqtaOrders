@@ -43,7 +43,7 @@ $mail = new PHPMailer();                              // Passing `true` enables 
 try {
 
 
-        $mail->IsSMTP(); // telling the class to use SMTP
+       // $mail->IsSMTP(); // telling the class to use SMTP
         $mail->SMTPDebug = 0;                     // enables SMTP debug information (for testing)
         // 1 = errors and messages
         // 2 = messages only
@@ -59,18 +59,25 @@ try {
         $mail->Subject = $subjectToSend;
         $mail->MsgHTML($formatedMessageToSend);
       //Recipients
-       $mail->AddAddress('info@rozn.org', 'Loqta contact');     // Add a recipient
+       $mail->AddAddress('mona.subaih@gmail.com');     // Add a recipient
+        $mail->AddCC('eng.hkurd@gmail.com');
 
       $mail->isHTML(true);                                  // Set email format to HTML
       $mail->Body    = $formatedMessageToSend;
     
 
-    $mail->send();
+    if($mail->send()){
       $resultMessages['status'] = true;
     $resultMessages['message'] = 'send!!';
     echo json_encode($resultMessages);
+    }else{
+       $resultMessages['status'] = false;
+      
+    $resultMessages['message'] = 'Message could not be sent. Mailer Error: '. $mail->ErrorInfo;
+    echo json_encode($resultMessages);
+    }
 } catch (Exception $e) {
-      $resultMessages['status'] = true;
+      $resultMessages['status'] = false;
       
     $resultMessages['message'] = 'Message could not be sent. Mailer Error: '. $mail->ErrorInfo;
     echo json_encode($resultMessages);

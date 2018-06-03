@@ -13,7 +13,7 @@ $dateToVeirifyToken = date("d/m/y H");
 
 $tokenToVeirify = md5($palpayOauthKey . $dateToVeirifyToken);
 
-die($tokenToVeirify);
+//die($tokenToVeirify);
 //die(sha1(uniqid("palpay_operations", true)));
 
 $token = $_GET['tt'];

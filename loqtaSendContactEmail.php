@@ -1,13 +1,19 @@
 <?php
+header('Content-Type: application/json');
+
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 //die(sha1(uniqid("loqta_sendContactEmail", true)));
 //f1e1f4421d57660a7fa3bafe7c569eb41899314c
+include 'lib/phpmailer/PHPMailerAutoload.php';
+error_reporting(0);
 
 $loqtaContactKey = "f1e1f4421d57660a7fa3bafe7c569eb41899314c";
 $dateToVeirifyToken = date("d/m/y H");
+ 
 
 $tokenToVeirify = base64_encode($loqtaContactKey . $dateToVeirifyToken);
+
 $token = $_GET['tt'];
 $name = ($_POST['name']) ? $_POST['name'] : '';
 $region = ($_POST['region']) ? $_POST['region'] : '';
@@ -21,47 +27,53 @@ $formatedMessageToSend = "Name:".$name." <br><br> Region:".$region." <br><br> Mo
 
 if ($tokenToVeirify != $token) {
     $resultStatus = false;
-    $resultMessages[] = 'Invalid Token, Or Expired Token';
-}
+    $resultMessages['status'] = false;
+    $resultMessages['message'] = 'Invalid Token, Or Expired Token';
+    echo json_encode($resultMessages);
+    
+}else{
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+
+
+
 
 //Load Composer's autoloader
-require 'vendor/autoload.php';
 
-$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+$mail = new PHPMailer();                              // Passing `true` enables exceptions
 try {
-    //Server settings
-    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'mail.rozn.org';  // Specify main and backup SMTP servers
-    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'loqta_contact@rozn.org';                 // SMTP username
-    $mail->Password = '%KwK.ju3VQ3[';                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 465;                                    // TCP port to connect to
 
-    //Recipients
-    $mail->setFrom('loqta_contact@rozn.org', 'Loqta contact');
-    $mail->addAddress('loqta_contact@rozn.org', 'Loqta contact');     // Add a recipient
-    //$mail->addAddress('ellen@example.com');               // Name is optional
-    //$mail->addReplyTo('info@example.com', 'Information');
-    //$mail->addCC('cc@example.com');
-    //$mail->addBCC('bcc@example.com');
 
-    //Attachments
-    // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-    // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        $mail->IsSMTP(); // telling the class to use SMTP
+        $mail->SMTPDebug = 0;                     // enables SMTP debug information (for testing)
+        // 1 = errors and messages
+        // 2 = messages only
+        $mail->SMTPAuth = true;                  // enable SMTP authentication
+        $mail->SMTPSecure = "tls";
+        $mail->Host = "smtp.gmail.com";      // SMTP server
+        $mail->Port = 587;                   // SMTP port
+        $mail->Username = "loqta.ps2016@gmail.com";  // username
+        $passord = "\$uperStar18@gm";
+        $mail->Password = $passord;            // password
+        
+        $mail->SetFrom('loqta.ps2016@gmail.com', 'Loqta');
+        $mail->Subject = $subjectToSend;
+        $mail->MsgHTML($formatedMessageToSend);
+      //Recipients
+       $mail->AddAddress('info@rozn.org', 'Loqta contact');     // Add a recipient
 
-    //Content
-    $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = $subjectToSend;
-    $mail->Body    = $formatedMessageToSend;
-    //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+      $mail->isHTML(true);                                  // Set email format to HTML
+      $mail->Body    = $formatedMessageToSend;
+    
 
     $mail->send();
-    echo 'Message has been sent';
+      $resultMessages['status'] = true;
+    $resultMessages['message'] = 'send!!';
+    echo json_encode($resultMessages);
 } catch (Exception $e) {
-    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+      $resultMessages['status'] = true;
+      
+    $resultMessages['message'] = 'Message could not be sent. Mailer Error: '. $mail->ErrorInfo;
+    echo json_encode($resultMessages);
+    
+}
 }
